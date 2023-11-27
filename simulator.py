@@ -1,4 +1,5 @@
 import random, math
+import numpy as np
 from typing import List, Tuple
 
 
@@ -14,12 +15,12 @@ class SRS_Simulator:
         self.verbose = verbose
         self.num_cards = num_cards
 
-        last_review = [0.0 for _ in range(self.num_cards)]
-        retrievability = [initial_retrieviability for _ in range(self.num_cards)]
-        stability = [0.5 for _ in range(self.num_cards)]
-        num_reviews = [0 for _ in range(self.num_cards)]
+        last_review = np.array([0.0 for _ in range(self.num_cards)])
+        retrievability = np.array([initial_retrieviability for _ in range(self.num_cards)])
+        stability = np.array([0.5 for _ in range(self.num_cards)])
+        num_reviews = np.array([0 for _ in range(self.num_cards)])
 
-        self.state = [retrievability, stability, last_review, num_reviews]
+        self.state = np.array([retrievability, stability, last_review, num_reviews])
         self.dt = dt  # time step
         self.t = 0   # global time
 
@@ -36,6 +37,9 @@ class SRS_Simulator:
 
     def tick(self) -> None:
         self.t += self.dt
+
+        # Update retrievability of all cards
+
 
     def review_card(self, card: int, success: bool) -> None:
         self.tick()
