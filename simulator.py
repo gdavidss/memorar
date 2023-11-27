@@ -38,7 +38,20 @@ class SRS_Simulator:
     def tick(self) -> None:
         self.t += self.dt
 
-        # Update retrievability of all cards
+        # BUG: this is computing the new retrievability assuming it was 1.0 before
+        # which might not be the case if we've never reviewed the card
+        # this also relates to our question of how to initialize the retrievability
+
+        # decrease retrievability of all cards due to passage of time        
+        if self.verbose:
+            print("old retrievability: {}".format(self.state[RETRIEVABILITY_INDEX]))
+        
+        stability = self.state[STABILITY_INDEX]
+        dt_cards = self.t - self.state[LAST_REVIEW_INDEX]
+        self.state[RETRIEVABILITY_INDEX] = np.exp(-dt_cards/stability)
+    
+        if self.verbose:
+            print("new retrievability: {}".format(self.state[RETRIEVABILITY_INDEX]))
 
 
     def review_card(self, card: int, success: bool) -> None:
@@ -56,7 +69,6 @@ class SRS_Simulator:
         if success:
             # Improve stability of the card
             num_reviews = self.state[NUM_REVIEWS_INDEX][card]
-            dt_card = self.t - self.state[LAST_REVIEW_INDEX][card]
             old_stability = self.state[STABILITY_INDEX][card]
 
             # how fast the stability grows in proportion to # of reviews
