@@ -16,7 +16,7 @@ class SRS_Simulator:
 
         last_review = [0.0 for _ in range(self.num_cards)]
         retrievability = [initial_retrieviability for _ in range(self.num_cards)]
-        stability = [1.0 for _ in range(self.num_cards)]
+        stability = [0.5 for _ in range(self.num_cards)]
         num_reviews = [0 for _ in range(self.num_cards)]
 
         self.state = [retrievability, stability, last_review, num_reviews]
@@ -38,24 +38,34 @@ class SRS_Simulator:
         self.t += self.dt
 
     def review_card(self, card: int, success: bool) -> None:
-        self.state[NUM_REVIEWS_INDEX][card] += 1
+        self.tick()
+    
+        if self.verbose:
+            print("====================================")
+            print("Reviewing card {}".format(card))
+            print("Retrievability: {}".format(self.state[RETRIEVABILITY_INDEX][card]))
+            print("Stability: {}".format(self.state[STABILITY_INDEX][card]))
         
-        if success:
-            # If the review of a card was successful, set its retrievability to 1
-            self.state[RETRIEVABILITY_INDEX][card] = 1.0
+        self.state[NUM_REVIEWS_INDEX][card] += 1
+        self.state[RETRIEVABILITY_INDEX][card] = 1.0
 
+        if success:
             # Improve stability of the card
             num_reviews = self.state[NUM_REVIEWS_INDEX][card]
-            dt_card = self.state[LAST_REVIEW_INDEX][card] - self.t
-            growth_factor = 1 # how fast the stability grows in proportion to # of reviews
-            new_stability = math.e ** (-dt_card / (math.e ** (growth_factor * num_reviews)))
-            self.state[STABILITY_INDEX][card] = new_stability
-        else:
-            # INCOMPLETE
-            # Ideally, we should be just decrease the stability of that card, 
-            # so its retrievability decays faster
+            dt_card = self.t - self.state[LAST_REVIEW_INDEX][card]
+            old_stability = self.state[STABILITY_INDEX][card]
 
-            # let's do nothing for now though, we can experiment decreasing it later
+            # how fast the stability grows in proportion to # of reviews
+            # QUESTION: is it better for this to be nonlinear / exponential?
+            scaling_factor = 0.04 
+            new_stability = old_stability + (scaling_factor * num_reviews)
+        
+            if self.verbose:
+                print("Card {} successfully reviewed".format(card))
+                print("Retrievability: {}".format(self.state[RETRIEVABILITY_INDEX][card]))
+                print("Stability: {}".format(new_stability))
+        else:
+            # let's do nothing with stability for now, just decrease retrievability with time
             pass
         
         # Update last review time
@@ -68,7 +78,6 @@ class SRS_Simulator:
         pass
 
     def step(self) -> List[List[float]]:
-        self.tick()
         # Choose a card to review
         card = self.select_card()
         
