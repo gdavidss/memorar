@@ -3,6 +3,7 @@ from QLearning import QLearning
 from UserModel import User, Card, Grade
 from Simulator import SRS_Simulator
 from RandomPolicy import RandomPolicy
+from OptimalPolicy import OptimalPolicy
 from typing import List, Tuple
 from MDP import MDP
 import pickle
@@ -68,7 +69,10 @@ def evaluateModel(model: MDP, testingData: List[Tuple[List[Card], List[float]]])
     score = 0
 
     for state, rewardList in testingData:
-        policy = model.computePolicy(state=state)
+        if type(model) == OptimalPolicy:
+            policy = model.computePolicy(state=state, rewardList=rewardList)
+        else:
+            policy = model.computePolicy(state=state)
         score += rewardList[policy]
     
     return score
@@ -81,10 +85,12 @@ def evaluate(numCards: int, numEpisodes: int, params: List[float]):
     testingData = getTestData(numEpisodes=numEpisodes, numCards=numCards, force=False)
     qLearningScore = evaluateModel(QLearning(numCards=numCards), testingData=testingData)
     randomScore = evaluateModel(RandomPolicy(numCards=numCards), testingData=testingData)
+    optimalScore = evaluateModel(OptimalPolicy(numCards=numCards), testingData=testingData)
 
     # Print results
     print(f"**Results from evalutation:**")
     print(f"Model Utility: {qLearningScore}")
+    print(f"Optimal Policy Utility: {optimalScore}")
     print(f"Random Policy Utility: {randomScore}")
     print(f"Score (model - random): {qLearningScore - randomScore}")
 
