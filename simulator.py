@@ -1,9 +1,12 @@
 from QLearning import QLearning
 from UserModel import User, Card, Grade, Time
-from typing import List
+from typing import List, Tuple
 import random
+from collections import deque
+from ExperienceReplay import ExperieceReplay
 
 EPSILON = 0.99
+BATCH_SIZE = 5
 
 class SRS_Simulator():
     """
@@ -15,6 +18,8 @@ class SRS_Simulator():
         self.model = model
         self.numCards = numCards
         self.epsilon = EPSILON
+        self.batchSize = BATCH_SIZE
+        self.experienceDB = ExperieceReplay()
         self.state: List[Card] = [(Grade.Easy, 0) for _ in range(self.numCards)]
         
     def _getAction(self, state: List[Card]) -> int:
@@ -63,6 +68,14 @@ class SRS_Simulator():
             nextState = [(grade, t + 1) for grade, t in self.state]
             nextState[action] = (grade, 0)
 
+            # Add to experience replay
+            self.experienceDB.storeExperience((self.state, action, reward, nextState))
+
             # Update weights based on episode
-            self.model.updateWeights(self.state, action, reward, nextState)
+            if (self.experienceDB.size() >= self.batchSize):
+                batch = self.experienceDB.sampleBatch(self.batchSize)
+                for state, action, reward, nextState in batch:
+                    self.model.updateWeights(state, action, reward, nextState)
+            else:
+                self.model.updateWeights(self.state, action, reward, nextState)
             self.state = nextState

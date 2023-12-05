@@ -11,7 +11,7 @@ class Grade(Enum):
     Easy = 3
 Card = Tuple[Stability, Time] 
 
-STABILITY_SCALING_FACTOR = 1.2
+STABILITY_SCALING_FACTOR = 1.1
 DEFAULT_STABILITY = 5
 DELTA_T = 1
 
@@ -55,6 +55,7 @@ class User:
         """
         card = self.cards[cardIndex]
         R = self._computeRetrievalibity(card)
+        #print("Card:", cardIndex, " | S:", card[0], " | t:", card[1], " | R:", R)
 
         # Get Grade
         grade = self._computeGrade(R)
