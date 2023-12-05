@@ -5,7 +5,7 @@ import random
 from collections import deque
 from ExperienceReplay import ExperieceReplay
 
-EPSILON = 0.99
+EPSILON = 0.6
 BATCH_SIZE = 5
 
 class SRS_Simulator():
@@ -28,7 +28,7 @@ class SRS_Simulator():
         to choose an action at each time-step. 
         Returns the card index to be reviewed
         """
-        if random.random() < self.epsilon:
+        if random.uniform(0, 1) < self.epsilon:
             return random.choice(range(self.numCards))
         
         return self.model.computePolicy(state)

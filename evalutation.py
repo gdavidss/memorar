@@ -8,6 +8,7 @@ from typing import List, Tuple
 from MDP import MDP
 import pickle
 import random
+import numpy as np
 
 TEST_DATA_FILENAME = "testingData.pkl"
 
@@ -73,17 +74,19 @@ def evaluateModel(model: MDP, testingData: List[Tuple[List[Card], List[float]]])
             policy = model.computePolicy(state=state, rewardList=rewardList)
         else:
             policy = model.computePolicy(state=state)
+            #if type(model) == QLearning:
+            #    print(policy)
         score += rewardList[policy]
     
     return score
 
-def evaluate(numCards: int, numEpisodes: int, params: List[float]):
+def evaluate(numCards: int, numEpisodes: int, weights: np.ndarray):
     """
     Runs a number of simulations and compare the total
     sum of rewards (utility) of our model with a random policy.
     """
     testingData = getTestData(numEpisodes=numEpisodes, numCards=numCards, force=False)
-    qLearningScore = evaluateModel(QLearning(numCards=numCards), testingData=testingData)
+    qLearningScore = evaluateModel(QLearning(numStates=numCards, weights=weights), testingData=testingData)
     randomScore = evaluateModel(RandomPolicy(numCards=numCards), testingData=testingData)
     optimalScore = evaluateModel(OptimalPolicy(numCards=numCards), testingData=testingData)
 

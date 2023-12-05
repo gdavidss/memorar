@@ -7,11 +7,13 @@ import numpy as np
 NUM_CARDS = 4
 
 def main():
-    qLearning = QLearning(numCards=NUM_CARDS)
+    qLearning = QLearning(numStates=NUM_CARDS)
     simulator = SRS_Simulator(numCards=NUM_CARDS, model=qLearning)
-    params: np.array = simulator.run(numEpisodes=1000)
+    weights: np.ndarray = simulator.run(numEpisodes=1000)
 
-    evalutation.evaluate(numCards=NUM_CARDS, numEpisodes=100000, params=params)
+    print("Learned weights", weights)
+
+    evalutation.evaluate(numCards=NUM_CARDS, numEpisodes=100000, weights=weights)
 
 if __name__ == "__main__":
     main()
