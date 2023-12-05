@@ -69,7 +69,7 @@ class SRS_Simulator():
             nextState[action] = (grade, 0)
 
             # Add to experience replay
-            self.experienceDB.storeExperience((self.state, action, reward, nextState))
+            self.experienceDB.store((self.state, action, reward, nextState))
 
             # Update weights based on episode
             if (self.experienceDB.size() >= self.batchSize):
@@ -79,3 +79,5 @@ class SRS_Simulator():
             else:
                 self.model.updateWeights(self.state, action, reward, nextState)
             self.state = nextState
+        
+        return self.model.weights

@@ -15,7 +15,7 @@ class ExperieceReplay():
     def __init__(self):
         self.memory = deque(maxlen=MAX_MEMORY_SIZE)
 
-    def storeExperience(self, episode: Episode) -> None:
+    def store(self, episode: Episode) -> None:
         """
         Store an episode in the experience replay memory.
         """
