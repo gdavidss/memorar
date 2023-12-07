@@ -18,6 +18,8 @@ class SRS_Simulator():
         self.model = model
         self.numCards = numCards
         self.epsilon = EPSILON
+        self.epsilon_min = 0.1
+        self.epsilon_decay = 0.999
         self.batchSize = BATCH_SIZE
         self.experienceDB = ExperieceReplay()
         self.state: List[Card] = [(Grade.Easy, 0) for _ in range(self.numCards)]
@@ -79,5 +81,9 @@ class SRS_Simulator():
             else:
                 self.model.updateWeights(self.state, action, reward, nextState)
             self.state = nextState
+            
+            # epsilon decay after each run/episode:
+            if self.epsilon > self.epsilon_min:
+                self.epsilon *= self.epsilon_decay
         
         return self.model.weights
