@@ -6,7 +6,7 @@ from collections import deque
 MAX_MEMORY_SIZE = 1000
 Episode = Tuple[List[Card], int, float, List[Card]]
 
-class ExperieceReplay():
+class ExperienceReplay():
     """
     Class: Experience Replay
     --------------------------

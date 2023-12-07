@@ -5,10 +5,13 @@ from enum import Enum
 
 Stability = float
 Time = float
+
 class Grade(Enum):
-    Hard = 0
-    Medium = 1
-    Easy = 3
+    Again = 1
+    Hard = 2
+    Medium = 5
+    Easy = 10
+
 Card = Tuple[Stability, Time] 
 STABILITY_MASTERY = 2000
 
@@ -41,12 +44,14 @@ class User:
         Compute the discretized grade value based on 
         the retrivevability probability.
         """
-        if R > 2/3:
+        if R > 3/4:
             return Grade.Easy
-        if R > 1/3:
+        if R > 2/4:
             return Grade.Medium
-        return Grade.Hard
-
+        if R > 1/4:
+            return Grade.Hard
+        return Grade.Again
+            
     def reviewCard(self, cardIndex: int) -> Grade:
         """
         Reviews the card given a card index, updates the 

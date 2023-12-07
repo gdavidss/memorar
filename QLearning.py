@@ -3,8 +3,6 @@ from typing import List, Tuple, Optional
 from MDP import MDP
 import numpy as np
 
-#TODO: IMPLEMENT THIS - CURRENT IMPLEMENTATION IS BROKEN
-
 State = List[Card]
 DEFAULT_ALPHA = 0.001
 DEFAULT_DISCOUNT = 0.9
@@ -41,7 +39,7 @@ class QLearning(MDP):
         return self.featureVector(state, action)
 
     def scaleGradient(self, grad: np.ndarray, l2_max: float) -> np.ndarray:
-        return min(l2_max / np.linalg.norm(grad), 1) * grad
+        return min(l2_max / (np.linalg.norm(grad) or 0.0001), 1) * grad
     
     def updateWeights(self, state: State, action: int, reward: float, nextState: State):
         maxQPrime = np.max([self.computeQ(nextState, action) for action in range(self.numStates)])

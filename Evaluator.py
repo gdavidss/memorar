@@ -9,6 +9,7 @@ from MDP import MDP
 import pickle
 import random
 import numpy as np
+from tqdm import tqdm
 
 TEST_DATA_FILENAME = "testingData.pkl"
 
@@ -23,8 +24,7 @@ def generateTestData(numEpisodes: int, numCards: int) -> List[Tuple[List[Card], 
     testingData: List[Tuple(List[Card], List[float])] = []
     state: List[Card] = [(Grade.Easy, 0) for _ in range(numCards)]
 
-    # TODO: Possibly change this to simulate multiple users
-    for _ in range(numEpisodes):
+    for _ in tqdm(range(numEpisodes)):
         if (user.hasAchievedMastery()):
             user = User(numCards)
             state: List[Card] = [(Grade.Easy, 0) for _ in range(numCards)]
@@ -83,7 +83,7 @@ def evaluateModel(model: MDP, testingData: List[Tuple[List[Card], List[float]]])
     
     return score
 
-def evaluate(numCards: int, numEpisodes: int, weights: np.ndarray):
+def evaluate(numCards: int, numEpisodes: int, weights: np.ndarray) -> float:
     """
     Runs a number of simulations and compare the total
     sum of rewards (utility) of our model with a random policy.
@@ -92,12 +92,15 @@ def evaluate(numCards: int, numEpisodes: int, weights: np.ndarray):
     qLearningScore = evaluateModel(QLearning(numStates=numCards, weights=weights), testingData=testingData)
     randomScore = evaluateModel(RandomPolicy(numCards=numCards), testingData=testingData)
     optimalScore = evaluateModel(OptimalPolicy(numCards=numCards), testingData=testingData)
-
-    # Print results
-    print(f"**Results from evalutation:**")
+    
+    normalizedScore = (qLearningScore - randomScore)/(optimalScore - randomScore)
+    
+    print(f"**Results from evaluation:**")
     print(f"Model Utility: {qLearningScore}")
     print(f"Optimal Policy Utility: {optimalScore}")
     print(f"Random Policy Utility: {randomScore}")
     print(f"Score (model - random): {qLearningScore - randomScore}")
-    print(f"Normalized Score (lower/upper bound): {(qLearningScore - randomScore)/(optimalScore - randomScore)}")
+    print(f"Normalized Score (lower/upper bound): {normalizedScore}")
+
+    return normalizedScore
 

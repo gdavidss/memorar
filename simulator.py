@@ -3,7 +3,8 @@ from UserModel import User, Card, Grade, Time
 from typing import List, Tuple
 import random
 from collections import deque
-from ExperienceReplay import ExperieceReplay
+from ExperienceReplay import ExperienceReplay
+from tqdm import tqdm
 
 EPSILON = 0.99
 BATCH_SIZE = 10
@@ -19,9 +20,9 @@ class SRS_Simulator():
         self.numCards = numCards
         self.epsilon = EPSILON
         self.epsilon_min = 0.1
-        self.epsilon_decay = 0.999
+        self.epsilon_decay = 0.995
         self.batchSize = BATCH_SIZE
-        self.experienceDB = ExperieceReplay()
+        self.experienceDB = ExperienceReplay()
         self.state: List[Card] = [(Grade.Easy, 0) for _ in range(self.numCards)]
         
     def _getAction(self, state: List[Card]) -> int:
@@ -52,7 +53,7 @@ class SRS_Simulator():
         user = User(self.numCards)
          
         # TODO: Adapt to generate multiple users
-        for _ in range(numEpisodes):
+        for _ in tqdm(range(numEpisodes)):
             if (user.hasAchievedMastery()):
                 user = User(self.numCards)
                 self.state: List[Card] = [(Grade.Easy, 0) for _ in range(self.numCards)]
