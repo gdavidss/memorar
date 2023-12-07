@@ -41,7 +41,7 @@ class SRS_Simulator():
         This method computes the reward by applying the 
         reward function of the model.
         """
-        return grade.value * t
+        return grade.value ** 2 * t
 
     def run(self, numEpisodes: int) -> None:
         """
@@ -53,6 +53,9 @@ class SRS_Simulator():
          
         # TODO: Adapt to generate multiple users
         for _ in range(numEpisodes):
+            if (user.hasAchievedMastery()):
+                user = User(self.numCards)
+                self.state: List[Card] = [(Grade.Easy, 0) for _ in range(self.numCards)]
             # Choose a card to review
             action = self._getAction(self.state)
 
