@@ -3,7 +3,7 @@ from typing import List, Tuple
 import random
 from collections import deque
 
-MAX_MEMORY_SIZE = 10000
+MAX_MEMORY_SIZE = 1000
 Episode = Tuple[List[Card], int, float, List[Card]]
 
 class ExperieceReplay():

@@ -5,8 +5,8 @@ import random
 from collections import deque
 from ExperienceReplay import ExperieceReplay
 
-EPSILON = 0.6
-BATCH_SIZE = 5
+EPSILON = 0.99
+BATCH_SIZE = 10
 
 class SRS_Simulator():
     """
@@ -39,7 +39,7 @@ class SRS_Simulator():
         This method computes the reward by applying the 
         reward function of the model.
         """
-        return grade.value ** 2 * t
+        return grade.value * t
 
     def run(self, numEpisodes: int) -> None:
         """

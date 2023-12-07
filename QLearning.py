@@ -21,14 +21,14 @@ class QLearning(MDP):
         self.alpha = alpha
         self.discount = discount
         if weights is None:
-            self.weights = np.zeros(shape=3 * numStates + 1, dtype=float)
+            self.weights = np.zeros(shape=numStates + 1, dtype=float)
         else:
             self.weights = weights
 
     def featureVector(self, state: State, action: int):
-        stateWeightsVector = np.array([float(i.value) if type(i) == Grade else i for s in state for i in s])
-        actionOneHotVector = np.array([1 if i == action else 0 for i in range(self.numStates)])
-        return np.concatenate([[1], stateWeightsVector, actionOneHotVector])
+        #stateWeightsVector = np.array([float(i.value) if type(i) == Grade else i for s in state for i in s])
+        actionOneHotVector = np.array([G.value * t if i == action else 0 for i, (G, t) in enumerate(state)])
+        return np.concatenate([[1], actionOneHotVector])
 
     def computeQ(self, state: State, action: int):
         return np.dot(self.weights, self.featureVector(state, action))
