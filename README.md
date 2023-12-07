@@ -12,7 +12,7 @@ This project comprises several Python classes organized in different files. Belo
 
 The UserModel file contains classes for modeling a user's memory and grading system:
 
-- `Grade`(Enum): Categorizes a learner's recall strength into 'Hard', 'Medium', and 'Easy' based on retrieval probability.
+- `Grade`(Enum): Categorizes a learner's recall strength into 'Again', 'Hard', 'Medium', and 'Easy' based on retrieval probability.
 
 - `User`: This Class models a user's memory using the Forgetting Curve concept. It maintains parameters like card stability and time since the last review and provides methods for reviewing a card, updating the card's state, increasing review time, and checking for mastery.
 
