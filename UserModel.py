@@ -10,6 +10,7 @@ class Grade(Enum):
     Medium = 1
     Easy = 3
 Card = Tuple[Stability, Time] 
+STABILITY_MASTERY = 2000
 
 STABILITY_SCALING_FACTOR = 1.1
 DEFAULT_STABILITY = 5
@@ -74,3 +75,6 @@ class User:
         cards.
         """
         self.cards = [(S, t + DELTA_T) for S, t in self.cards]
+
+    def hasAchievedMastery(self) -> bool:
+        return min([S for S, _ in self.cards]) > STABILITY_MASTERY

@@ -18,13 +18,16 @@ def generateTestData(numEpisodes: int, numCards: int) -> List[Tuple[List[Card], 
     so by going through the number of specified episodes and computes a new state
     a reward list for each possible action in that state.
     """
-    user = User(numCards=numCards, noise=False)
+    user = User(numCards=numCards)
 
     testingData: List[Tuple(List[Card], List[float])] = []
     state: List[Card] = [(Grade.Easy, 0) for _ in range(numCards)]
 
     # TODO: Possibly change this to simulate multiple users
     for _ in range(numEpisodes):
+        if (user.hasAchievedMastery()):
+            user = User(numCards)
+            state: List[Card] = [(Grade.Easy, 0) for _ in range(numCards)]
         # Choose a card to review
         rewardList = [SRS_Simulator.computeReward(user.reviewCard(action), t) for action, (_, t) in enumerate(state)]
 
@@ -85,7 +88,7 @@ def evaluate(numCards: int, numEpisodes: int, weights: np.ndarray):
     Runs a number of simulations and compare the total
     sum of rewards (utility) of our model with a random policy.
     """
-    testingData = getTestData(numEpisodes=numEpisodes, numCards=numCards, force=False)
+    testingData = getTestData(numEpisodes=numEpisodes, numCards=numCards, force=True)
     qLearningScore = evaluateModel(QLearning(numStates=numCards, weights=weights), testingData=testingData)
     randomScore = evaluateModel(RandomPolicy(numCards=numCards), testingData=testingData)
     optimalScore = evaluateModel(OptimalPolicy(numCards=numCards), testingData=testingData)
@@ -96,4 +99,5 @@ def evaluate(numCards: int, numEpisodes: int, weights: np.ndarray):
     print(f"Optimal Policy Utility: {optimalScore}")
     print(f"Random Policy Utility: {randomScore}")
     print(f"Score (model - random): {qLearningScore - randomScore}")
+    print(f"Normalized Score (lower/upper bound): {(qLearningScore - randomScore)/(optimalScore - randomScore)}")
 

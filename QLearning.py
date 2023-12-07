@@ -34,7 +34,7 @@ class QLearning(MDP):
         return np.dot(self.weights, self.featureVector(state, action))
 
     def computePolicy(self, state: State) -> int:
-        print([self.computeQ(state, action) for action in range(self.numStates)])
+        #print([self.computeQ(state, action) for action in range(self.numStates)])
         return np.argmax([self.computeQ(state, action) for action in range(self.numStates)])
 
     def computeGradient(self, weights, state, action):
