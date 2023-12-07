@@ -25,7 +25,7 @@ class User:
     memory (S) and time since last review for each card (t).
     """
     def __init__(self, numCards: int, noise: bool = True) -> None:
-        self.cards: List[Card] = [(float(random.randint(1, 10)) if noise else DEFAULT_STABILITY, 0) for _ in range(numCards)] # stability of memory
+        self.cards: List[Card] = [(float(random.random()) if noise else DEFAULT_STABILITY, 0) for _ in range(numCards)] # stability of memory
         self.stabilityScalingFactor: float = STABILITY_SCALING_FACTOR
     
     def _computeRetrievalibity(self, card: Card) -> float:
