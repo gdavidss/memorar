@@ -88,11 +88,10 @@ def evaluate(numCards: int, numEpisodes: int, weights: np.ndarray) -> float:
     Runs a number of simulations and compare the total
     sum of rewards (utility) of our model with a random policy.
     """
-    testingData = getTestData(numEpisodes=numEpisodes, numCards=numCards, force=True)
+    testingData = getTestData(numEpisodes=numEpisodes, numCards=numCards, force= False)
     qLearningScore = evaluateModel(QLearning(numStates=numCards, weights=weights), testingData=testingData)
     randomScore = evaluateModel(RandomPolicy(numCards=numCards), testingData=testingData)
     optimalScore = evaluateModel(OptimalPolicy(numCards=numCards), testingData=testingData)
-    
     normalizedScore = (qLearningScore - randomScore)/(optimalScore - randomScore)
     
     print(f"**Results from evaluation:**")
@@ -100,7 +99,11 @@ def evaluate(numCards: int, numEpisodes: int, weights: np.ndarray) -> float:
     print(f"Optimal Policy Utility: {optimalScore}")
     print(f"Random Policy Utility: {randomScore}")
     print(f"Score (model - random): {qLearningScore - randomScore}")
-    print(f"Normalized Score (lower/upper bound): {normalizedScore}")
+    print(f"Optimality score: {qLearningScore/optimalScore}")
+    print(f"Normalized Score (lower/upper bound): {normalizedScore}") # lower bound = random policy, upper bound = optimal policy
+
+    # metrics to use: how to evaluate our algorithm -- time until stability, mean, median, how much a user tends to remembe of a least remembered card, etc.
+    # parameters to test around with: epsilon, learning rate, etc.
 
     return normalizedScore
 
