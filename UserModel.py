@@ -2,17 +2,18 @@ import random
 import numpy as np
 from typing import List, Tuple
 from enum import Enum
+import matplotlib.pyplot as plt
 
 Stability = float
 Time = float
 
 class Grade(Enum):
-    Again = 1
+    Again = 1 # Harder than "hard" (can't recall at all)
     Hard = 2
     Medium = 5
     Easy = 10
 
-Card = Tuple[Stability, Time] 
+Card = Tuple[Stability, Time]
 STABILITY_MASTERY = 2000
 
 STABILITY_SCALING_FACTOR = 1.1
@@ -27,21 +28,33 @@ class User:
     the Forgetting Curve, where it keeps track of the stability of 
     memory (S) and time since last review for each card (t).
     """
-    def __init__(self, numCards: int, noise: bool = True) -> None:
-        self.cards: List[Card] = [(float(random.random()) if noise else DEFAULT_STABILITY, 0) for _ in range(numCards)] # stability of memory
+    def __init__(self, numCards: int, noise: bool = True, uniform: bool = False) -> None:
+        if uniform:
+            # model stability as uniform distribution
+            self.cards: List[Card] = [(float(random.random()) if noise else DEFAULT_STABILITY, 0) for _ in
+                                      range(numCards)]  # stability of memory
+
+        else:
+            # model stability as normal distribution
+            self.cards: List[Card] = [(float(random.gauss(mu= 0.3, sigma= 0.1)) if noise else DEFAULT_STABILITY, 0) for _ in
+                                  range(numCards)]
+
+
+
         self.stabilityScalingFactor: float = STABILITY_SCALING_FACTOR
     
     def _computeRetrievalibity(self, card: Card) -> float:
         """
         Computes the transition function for the user, 
-        to ultimately return a grade based on the probability
+        to ultimately return a grade based on the probability.
+        The retrievability comes from the forgetting curve equation, found here: https://en.wikipedia.org/wiki/Forgetting_curve#cite_note-14
         """
         S, t = card
         return np.exp(-t/S)
     
     def _computeGrade(self, R: float) -> Grade:
         """
-        Compute the discretized grade value based on 
+        Compute the discretized grade value on a card based on
         the retrivevability probability.
         """
         if R > 3/4:
@@ -82,4 +95,6 @@ class User:
         self.cards = [(S, t + DELTA_T) for S, t in self.cards]
 
     def hasAchievedMastery(self) -> bool:
+        # the smallest stability across all cards must be larger than threshold
+        # if so user is "done" and we can generate next user
         return min([S for S, _ in self.cards]) > STABILITY_MASTERY
