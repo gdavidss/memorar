@@ -31,6 +31,8 @@ class User:
     memory (S) and time since last review for each card (t).
     """
     def __init__(self, numCards: int, deckStats: cardsDeck, noise: bool = True) -> None:
+        #print("mean stats: ", deckStats.mean_values)
+        #print("std dev stats: ", deckStats.std_dev_values)
         if deckStats.isUniform:
             # model stability as uniform distribution
             self.cards: List[Card] = [(float(random.random()) if noise else DEFAULT_STABILITY, 0) for _ in
@@ -38,13 +40,6 @@ class User:
 
         else:
             # model stability as normal distribution
-            # mew and sigma different for every card
-            # flaschard and mew and sigma values
-
-            # class deck of cards: 4 cards, harcode the mean and std dev for each card
-
-
-            # generate_stats_per_card look at each card and assign mew and sigma values and then pass that in and iterate through
 
             self.cards: List[Card] = [(float(random.gauss(mean, std_dev)) if noise else DEFAULT_STABILITY, 0) for _, mean, std_dev in zip(range(numCards), deckStats.mean_values, deckStats.std_dev_values)]
 
