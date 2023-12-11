@@ -1,3 +1,4 @@
+import cardsDeck
 from QLearning import QLearning
 from UserModel import User, Card, Grade, Time
 from typing import List, Tuple
@@ -17,11 +18,11 @@ class SRS_Simulator():
     --------------------------
     This class implements a simulator for a Space Repetition System (SRS)
     """
-    def __init__(self, numCards: int, model: QLearning, verbose: bool = False, uniform: bool = False):
+    def __init__(self, model: QLearning, deck: cardsDeck, verbose: bool = False):
+        self.deck = deck
         self.model = model
-        self.numCards = numCards
+        self.numCards = self.deck.numCards
         self.epsilon = EPSILON
-        self.uniform = uniform
         self.epsilon_min = 0.1 # always explore at least 10 percent of the time
         self.epsilon_decay = 0.995 # 5 percent decay in each run
         self.batchSize = BATCH_SIZE
@@ -53,7 +54,8 @@ class SRS_Simulator():
         and exploring the state space. This does
         """
         # Create User
-        user = User(numCards=self.numCards, uniform=self.uniform)
+
+        user = User(numCards=self.numCards, uniform = self.deck.isUniform) # pass in card stability mean and std dev, map card to (mean, std dev)
         initial_user_stability = []
         initial_user_stability.append([card_tuple[0] for card_tuple in user.cards])
         #average_change_user_stability = initial_user_stability # change average change in user stability to dict and use default dict
@@ -65,7 +67,7 @@ class SRS_Simulator():
         for _ in tqdm(range(numEpisodes)): # every episode is looking at a single card
             if (user.hasAchievedMastery()):
                 print("user achieved mastery!")
-                user = User(numCards=self.numCards, uniform=self.uniform) # new user
+                user = User(numCards=self.numCards, uniform = self.deck.isUniform) # new user
                 self.state: List[Card] = [(Grade.Easy, 0) for _ in range(self.numCards)] # reset states
                 userIndex += 1
                 initial_user_stability.append([card_tuple[0] for card_tuple in user.cards])

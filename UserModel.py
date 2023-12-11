@@ -36,8 +36,20 @@ class User:
 
         else:
             # model stability as normal distribution
-            self.cards: List[Card] = [(float(random.gauss(mu= 0.3, sigma= 0.1)) if noise else DEFAULT_STABILITY, 0) for _ in
-                                  range(numCards)]
+            # mew and sigma different for every card
+            # flaschard and mew and sigma values
+
+            # class deck of cards: 4 cards, harcode the mean and std dev for each card
+
+
+            # generate_stats_per_card look at each card and assign mew and sigma values and then pass that in and iterate through
+
+            self.cards: List[Card] = [(float(random.gauss(mean, std_dev)) if noise else DEFAULT_STABILITY, 0) for _, mean, std_dev in zip(range(numCards), mean_values, std_dev_values)]
+
+            # see how mew and sigma change the curve online for normal distrb.
+
+            # normal dist and randomly sample from that
+            # randomly sample from that distribution
 
 
 
