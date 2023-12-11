@@ -3,6 +3,7 @@ import Evaluator
 from typing import List
 from QLearning import QLearning
 import numpy as np
+from cardsDeck import CardsDeck
 
 NUM_CARDS = 40
 

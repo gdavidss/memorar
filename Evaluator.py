@@ -10,26 +10,24 @@ import pickle
 import random
 import numpy as np
 from tqdm import tqdm
-import os
-import csv
-
+import cardsDeck
 
 TEST_DATA_FILENAME = "testingData.pkl"
 
-def generateTestData(numEpisodes: int, numCards: int) -> List[Tuple[List[Card], List[float]]]:
+def generateTestData(numEpisodes: int, numCards: int, deckStats: cardsDeck) -> List[Tuple[List[Card], List[float]]]:
     """
     This function simulates a user and generates test data from scratch. It does
     so by going through the number of specified episodes and computes a new state
     a reward list for each possible action in that state.
     """
-    user = User(numCards=numCards)
+    user = User(numCards=numCards, deckStats = deckStats)
 
     testingData: List[Tuple(List[Card], List[float])] = []
     state: List[Card] = [(Grade.Easy, 0) for _ in range(numCards)]
 
     for _ in tqdm(range(numEpisodes)):
         if (user.hasAchievedMastery()):
-            user = User(numCards)
+            user = User(numCards = numCards, deckStats = deckStats)
             state: List[Card] = [(Grade.Easy, 0) for _ in range(numCards)]
         # Choose a card to review
         rewardList = [SRS_Simulator.computeReward(user.reviewCard(action), t) for action, (_, t) in enumerate(state)]
@@ -45,14 +43,14 @@ def generateTestData(numEpisodes: int, numCards: int) -> List[Tuple[List[Card], 
 
     return testingData
 
-def getTestData(numEpisodes: int, numCards: int, force: bool = False) -> List[Tuple[List[Card], List[float]]]:
+def getTestData(numEpisodes: int, numCards: int, deck: cardsDeck, force: bool = False) -> List[Tuple[List[Card], List[float]]]:
     """
     This function gets the testing data to evaluate the model. This data
     can come from a file or be generated if force is true or a file doesn't
     exist. 
     """
     if force:
-        testingData = generateTestData(numEpisodes=numEpisodes, numCards=numCards)
+        testingData = generateTestData(numEpisodes=numEpisodes, numCards=numCards, deck = deck)
         with open(TEST_DATA_FILENAME, 'wb') as file:
             pickle.dump(testingData, file)
         return testingData
@@ -61,7 +59,7 @@ def getTestData(numEpisodes: int, numCards: int, force: bool = False) -> List[Tu
         with open(TEST_DATA_FILENAME, 'rb') as file:
             testingData = pickle.load(file)
     except (FileNotFoundError, EOFError) as e:
-        testingData = generateTestData(numEpisodes=numEpisodes, numCards=numCards)
+        testingData = generateTestData(numEpisodes=numEpisodes, numCards=numCards, deck = deck)
         with open(TEST_DATA_FILENAME, 'wb') as file:
             pickle.dump(testingData, file)
 
@@ -91,11 +89,10 @@ def evaluate(numCards: int, numEpisodes: int, weights: np.ndarray, numEpisodesTr
     Runs a number of simulations and compare the total
     sum of rewards (utility) of our model with a random policy.
     """
-    testingData = getTestData(numEpisodes=numEpisodes, numCards=numCards, force=True)
+    testingData = getTestData(numEpisodes=numEpisodes, numCards=numCards, force= False, deck = deck)
     qLearningScore = evaluateModel(QLearning(numStates=numCards, weights=weights), testingData=testingData)
     randomScore = evaluateModel(RandomPolicy(numCards=numCards), testingData=testingData)
     optimalScore = evaluateModel(OptimalPolicy(numCards=numCards), testingData=testingData)
-    
     normalizedScore = (qLearningScore - randomScore)/(optimalScore - randomScore)
     
     print(f"weights: {weights}")
