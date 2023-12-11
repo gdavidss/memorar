@@ -10,6 +10,9 @@ import pickle
 import random
 import numpy as np
 from tqdm import tqdm
+import os
+import csv
+
 
 TEST_DATA_FILENAME = "testingData.pkl"
 
@@ -83,7 +86,7 @@ def evaluateModel(model: MDP, testingData: List[Tuple[List[Card], List[float]]])
     
     return score
 
-def evaluate(numCards: int, numEpisodes: int, weights: np.ndarray) -> float:
+def evaluate(numCards: int, numEpisodes: int, weights: np.ndarray, numEpisodesTrain) -> float:
     """
     Runs a number of simulations and compare the total
     sum of rewards (utility) of our model with a random policy.
@@ -95,12 +98,28 @@ def evaluate(numCards: int, numEpisodes: int, weights: np.ndarray) -> float:
     
     normalizedScore = (qLearningScore - randomScore)/(optimalScore - randomScore)
     
+    print(f"weights: {weights}")
     print(f"**Results from evaluation:**")
     print(f"Model Utility: {qLearningScore}")
     print(f"Optimal Policy Utility: {optimalScore}")
     print(f"Random Policy Utility: {randomScore}")
     print(f"Score (model - random): {qLearningScore - randomScore}")
     print(f"Normalized Score (lower/upper bound): {normalizedScore}")
+
+    filename = 'evaluation_results_2.csv'
+    # Check if file exists; if not, write headers
+    if not os.path.isfile(filename):
+        with open(filename, 'w', newline='') as file:
+            writer = csv.writer(file)
+            writer.writerow(["Num cards", "Num episodes (train)", "Model utility", "Optimal policy utility", 
+                             "Random Policy Utility", "Score", "Normalized score"])
+
+    # Now append data
+    with open(filename, 'a', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow([numCards, numEpisodesTrain, qLearningScore, optimalScore, randomScore,
+                         qLearningScore - randomScore, normalizedScore])
+
 
     return normalizedScore
 

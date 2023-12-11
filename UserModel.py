@@ -27,8 +27,9 @@ class User:
     the Forgetting Curve, where it keeps track of the stability of 
     memory (S) and time since last review for each card (t).
     """
-    def __init__(self, numCards: int, noise: bool = True) -> None:
-        self.cards: List[Card] = [(float(random.random()) if noise else DEFAULT_STABILITY, 0) for _ in range(numCards)] # stability of memory
+    def __init__(self, numCards: int, noise: bool = False, stability = None) -> None:
+        if not stability:
+            self.cards: List[Card] = [(float(random.random()) if noise else DEFAULT_STABILITY, 0) for _ in range(numCards)] # stability of memory
         self.stabilityScalingFactor: float = STABILITY_SCALING_FACTOR
     
     def _computeRetrievalibity(self, card: Card) -> float:
@@ -44,12 +45,12 @@ class User:
         Compute the discretized grade value based on 
         the retrivevability probability.
         """
-        if R > 3/4:
+        if R> 3/4:
             return Grade.Easy
         if R > 2/4:
             return Grade.Medium
         if R > 1/4:
-            return Grade.Hard
+            return Grade.Hard 
         return Grade.Again
             
     def reviewCard(self, cardIndex: int) -> Grade:

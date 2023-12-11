@@ -6,7 +6,7 @@ from collections import deque
 from ExperienceReplay import ExperienceReplay
 from tqdm import tqdm
 
-EPSILON = 0.99
+EPSILON = 0.98
 BATCH_SIZE = 10
 
 class SRS_Simulator():
@@ -19,7 +19,7 @@ class SRS_Simulator():
         self.model = model
         self.numCards = numCards
         self.epsilon = EPSILON
-        self.epsilon_min = 0.1
+        self.epsilon_min = 0.02
         self.epsilon_decay = 0.995
         self.batchSize = BATCH_SIZE
         self.experienceDB = ExperienceReplay()
@@ -57,6 +57,7 @@ class SRS_Simulator():
             if (user.hasAchievedMastery()):
                 user = User(self.numCards)
                 self.state: List[Card] = [(Grade.Easy, 0) for _ in range(self.numCards)]
+
             # Choose a card to review
             action = self._getAction(self.state)
 

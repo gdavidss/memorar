@@ -5,7 +5,7 @@ import numpy as np
 
 State = List[Card]
 DEFAULT_ALPHA = 0.001
-DEFAULT_DISCOUNT = 0.9
+DEFAULT_DISCOUNT = 0.7
 
 class QLearning(MDP):
     """
