@@ -2,6 +2,8 @@ import random
 import numpy as np
 from typing import List, Tuple
 from enum import Enum
+
+import cardsDeck
 import matplotlib.pyplot as plt
 
 Stability = float
@@ -28,8 +30,8 @@ class User:
     the Forgetting Curve, where it keeps track of the stability of 
     memory (S) and time since last review for each card (t).
     """
-    def __init__(self, numCards: int, noise: bool = True, uniform: bool = False) -> None:
-        if uniform:
+    def __init__(self, numCards: int, deckStats: cardsDeck, noise: bool = True) -> None:
+        if deckStats.isUniform:
             # model stability as uniform distribution
             self.cards: List[Card] = [(float(random.random()) if noise else DEFAULT_STABILITY, 0) for _ in
                                       range(numCards)]  # stability of memory
@@ -44,7 +46,7 @@ class User:
 
             # generate_stats_per_card look at each card and assign mew and sigma values and then pass that in and iterate through
 
-            self.cards: List[Card] = [(float(random.gauss(mean, std_dev)) if noise else DEFAULT_STABILITY, 0) for _, mean, std_dev in zip(range(numCards), mean_values, std_dev_values)]
+            self.cards: List[Card] = [(float(random.gauss(mean, std_dev)) if noise else DEFAULT_STABILITY, 0) for _, mean, std_dev in zip(range(numCards), deckStats.mean_values, deckStats.std_dev_values)]
 
             # see how mew and sigma change the curve online for normal distrb.
 

@@ -55,7 +55,7 @@ class SRS_Simulator():
         """
         # Create User
 
-        user = User(numCards=self.numCards, uniform = self.deck.isUniform) # pass in card stability mean and std dev, map card to (mean, std dev)
+        user = User(numCards=self.numCards, deckStats = self.deck) # pass in card stability mean and std dev, map card to (mean, std dev)
         initial_user_stability = []
         initial_user_stability.append([card_tuple[0] for card_tuple in user.cards])
         #average_change_user_stability = initial_user_stability # change average change in user stability to dict and use default dict
@@ -67,7 +67,7 @@ class SRS_Simulator():
         for _ in tqdm(range(numEpisodes)): # every episode is looking at a single card
             if (user.hasAchievedMastery()):
                 print("user achieved mastery!")
-                user = User(numCards=self.numCards, uniform = self.deck.isUniform) # new user
+                user = User(numCards=self.numCards, deckStats = self.deck) # new user
                 self.state: List[Card] = [(Grade.Easy, 0) for _ in range(self.numCards)] # reset states
                 userIndex += 1
                 initial_user_stability.append([card_tuple[0] for card_tuple in user.cards])

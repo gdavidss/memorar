@@ -11,7 +11,6 @@ def main():
     qLearning = QLearning(numStates=NUM_CARDS)
 
     uniform_deck = CardsDeck(numCards = NUM_CARDS, isUniform = True)
-
     simulator = SRS_Simulator(model=qLearning, deck = uniform_deck)
     weights: np.ndarray = simulator.run(numEpisodes=10000)
     print("Learned weights", weights)
